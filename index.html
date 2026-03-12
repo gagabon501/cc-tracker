@@ -580,7 +580,7 @@
       };
 
       function getFortnightDates() {
-        const anchor = new Date(2026, 3, 12); // Mar 12 2026
+        const anchor = new Date(2026, 2, 12); // Mar 12 2026 - because the month counting begins at zero (i.e. 0-Jan, 1-Feb, 2-Mar...)
         const now = new Date();
         const diffMs = now - anchor;
         const diffDays = Math.floor(diffMs / 86400000);
