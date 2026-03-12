@@ -1,209 +1,683 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="theme-color" content="#0D1117">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<title>CC Budget Tracker</title>
-<link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoiQ0MgQnVkZ2V0IFRyYWNrZXIiLCJzaG9ydF9uYW1lIjoiQ0MgVHJhY2tlciIsInN0YXJ0X3VybCI6Ii4iLCJkaXNwbGF5Ijoic3RhbmRhbG9uZSIsImJhY2tncm91bmRfY29sb3IiOiIjMEQxMTE3IiwidGhlbWVfY29sb3IiOiIjMEQxMTE3In0=">
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
-<style>
-  :root {
-    --bg: #0D1117; --surface: #161B22; --border: #21262D; --border-light: #30363D;
-    --text: #E6EDF3; --text-dim: #8B949E; --text-faint: #484F58;
-    --green: #3FB950; --green-bg: rgba(63,185,80,0.08); --green-border: rgba(63,185,80,0.15);
-    --amber: #D29922; --amber-bg: rgba(210,153,34,0.1); --amber-border: rgba(210,153,34,0.3);
-    --red: #F85149; --red-bg: rgba(248,81,73,0.1); --red-border: rgba(248,81,73,0.3);
-    --cat-bills: #E8735A; --cat-transport: #5B9BD5; --cat-subs: #8B6FB0; --cat-other: #6BAF7B;
-  }
-  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-  body { font-family: 'DM Sans', -apple-system, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; min-height: 100dvh; overflow-x: hidden; padding-bottom: env(safe-area-inset-bottom); }
-  .mono { font-family: 'DM Mono', monospace; }
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover"
+    />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="theme-color" content="#0D1117" />
+    <meta
+      name="apple-mobile-web-app-status-bar-style"
+      content="black-translucent"
+    />
+    <title>CC Budget Tracker</title>
+    <link
+      rel="manifest"
+      href="data:application/json;base64,eyJuYW1lIjoiQ0MgQnVkZ2V0IFRyYWNrZXIiLCJzaG9ydF9uYW1lIjoiQ0MgVHJhY2tlciIsInN0YXJ0X3VybCI6Ii4iLCJkaXNwbGF5Ijoic3RhbmRhbG9uZSIsImJhY2tncm91bmRfY29sb3IiOiIjMEQxMTE3IiwidGhlbWVfY29sb3IiOiIjMEQxMTE3In0="
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg: #0d1117;
+        --surface: #161b22;
+        --border: #21262d;
+        --border-light: #30363d;
+        --text: #e6edf3;
+        --text-dim: #8b949e;
+        --text-faint: #484f58;
+        --green: #3fb950;
+        --green-bg: rgba(63, 185, 80, 0.08);
+        --green-border: rgba(63, 185, 80, 0.15);
+        --amber: #d29922;
+        --amber-bg: rgba(210, 153, 34, 0.1);
+        --amber-border: rgba(210, 153, 34, 0.3);
+        --red: #f85149;
+        --red-bg: rgba(248, 81, 73, 0.1);
+        --red-border: rgba(248, 81, 73, 0.3);
+        --cat-bills: #e8735a;
+        --cat-transport: #5b9bd5;
+        --cat-subs: #8b6fb0;
+        --cat-other: #6baf7b;
+      }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        -webkit-tap-highlight-color: transparent;
+      }
+      body {
+        font-family:
+          "DM Sans",
+          -apple-system,
+          sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        min-height: 100vh;
+        min-height: 100dvh;
+        overflow-x: hidden;
+        padding-bottom: env(safe-area-inset-bottom);
+      }
+      .mono {
+        font-family: "DM Mono", monospace;
+      }
 
-  /* Header */
-  .header { background: linear-gradient(135deg, var(--surface) 0%, var(--bg) 100%); border-bottom: 1px solid var(--border); padding: 16px 20px 14px; padding-top: max(16px, env(safe-area-inset-top)); }
-  .header-top { display: flex; justify-content: space-between; align-items: flex-start; }
-  .header-label { font-size: 10px; font-weight: 600; letter-spacing: 1.5px; color: var(--text-dim); text-transform: uppercase; margin-bottom: 3px; }
-  .header-title { font-size: 20px; font-weight: 700; letter-spacing: -0.5px; }
-  .header-dates { font-size: 11px; color: var(--text-dim); text-align: right; }
-  .header-sub { font-size: 10px; color: var(--text-faint); margin-top: 2px; }
+      /* Header */
+      .header {
+        background: linear-gradient(135deg, var(--surface) 0%, var(--bg) 100%);
+        border-bottom: 1px solid var(--border);
+        padding: 16px 20px 14px;
+        padding-top: max(16px, env(safe-area-inset-top));
+      }
+      .header-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+      }
+      .header-label {
+        font-size: 10px;
+        font-weight: 600;
+        letter-spacing: 1.5px;
+        color: var(--text-dim);
+        text-transform: uppercase;
+        margin-bottom: 3px;
+      }
+      .header-title {
+        font-size: 20px;
+        font-weight: 700;
+        letter-spacing: -0.5px;
+      }
+      .header-dates {
+        font-size: 11px;
+        color: var(--text-dim);
+        text-align: right;
+      }
+      .header-sub {
+        font-size: 10px;
+        color: var(--text-faint);
+        margin-top: 2px;
+      }
 
-  .content { padding: 14px 20px 120px; }
+      .content {
+        padding: 14px 20px 120px;
+      }
 
-  /* Alert */
-  .alert { border-radius: 12px; padding: 12px 14px; margin-bottom: 14px; display: flex; align-items: center; justify-content: space-between; gap: 10px; animation: slideDown 0.3s ease; }
-  .alert.over { background: var(--red-bg); border: 1px solid var(--red-border); }
-  .alert.warn { background: var(--amber-bg); border: 1px solid var(--amber-border); }
-  .alert-body { display: flex; align-items: center; gap: 10px; }
-  .alert-icon { font-size: 20px; flex-shrink: 0; }
-  .alert-title { font-size: 13px; font-weight: 600; }
-  .alert-desc { font-size: 11px; color: var(--text-dim); margin-top: 2px; }
-  .alert-close { background: none; border: none; color: var(--text-faint); font-size: 18px; cursor: pointer; padding: 4px; flex-shrink: 0; }
+      /* Alert */
+      .alert {
+        border-radius: 12px;
+        padding: 12px 14px;
+        margin-bottom: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        animation: slideDown 0.3s ease;
+      }
+      .alert.over {
+        background: var(--red-bg);
+        border: 1px solid var(--red-border);
+      }
+      .alert.warn {
+        background: var(--amber-bg);
+        border: 1px solid var(--amber-border);
+      }
+      .alert-body {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .alert-icon {
+        font-size: 20px;
+        flex-shrink: 0;
+      }
+      .alert-title {
+        font-size: 13px;
+        font-weight: 600;
+      }
+      .alert-desc {
+        font-size: 11px;
+        color: var(--text-dim);
+        margin-top: 2px;
+      }
+      .alert-close {
+        background: none;
+        border: none;
+        color: var(--text-faint);
+        font-size: 18px;
+        cursor: pointer;
+        padding: 4px;
+        flex-shrink: 0;
+      }
 
-  /* Ring Card */
-  .ring-card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 20px; margin-bottom: 14px; }
-  .ring-row { display: flex; align-items: center; gap: 20px; }
-  .ring-wrap { position: relative; width: 110px; height: 110px; flex-shrink: 0; }
-  .ring-center { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-  .ring-pct { font-size: 22px; font-weight: 700; }
-  .ring-label { font-size: 9px; color: var(--text-faint); }
-  .ring-info { flex: 1; min-width: 0; }
-  .ring-stat { display: flex; justify-content: space-between; margin-bottom: 6px; }
-  .stat-label { font-size: 10px; color: var(--text-dim); margin-bottom: 1px; }
-  .stat-value { font-size: 20px; font-weight: 700; }
-  .mini-stats { display: flex; gap: 10px; margin-top: 10px; }
-  .mini-stat { border-radius: 8px; padding: 5px 10px; flex: 1; }
-  .mini-stat-label { font-size: 9px; }
-  .mini-stat-value { font-size: 14px; font-weight: 600; }
-  .tip-bar { margin-top: 14px; background: var(--bg); border-radius: 8px; padding: 9px 12px; font-size: 12px; color: var(--text-dim); line-height: 1.4; }
+      /* Ring Card */
+      .ring-card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 20px;
+        margin-bottom: 14px;
+      }
+      .ring-row {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+      }
+      .ring-wrap {
+        position: relative;
+        width: 110px;
+        height: 110px;
+        flex-shrink: 0;
+      }
+      .ring-center {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+      }
+      .ring-pct {
+        font-size: 22px;
+        font-weight: 700;
+      }
+      .ring-label {
+        font-size: 9px;
+        color: var(--text-faint);
+      }
+      .ring-info {
+        flex: 1;
+        min-width: 0;
+      }
+      .ring-stat {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 6px;
+      }
+      .stat-label {
+        font-size: 10px;
+        color: var(--text-dim);
+        margin-bottom: 1px;
+      }
+      .stat-value {
+        font-size: 20px;
+        font-weight: 700;
+      }
+      .mini-stats {
+        display: flex;
+        gap: 10px;
+        margin-top: 10px;
+      }
+      .mini-stat {
+        border-radius: 8px;
+        padding: 5px 10px;
+        flex: 1;
+      }
+      .mini-stat-label {
+        font-size: 9px;
+      }
+      .mini-stat-value {
+        font-size: 14px;
+        font-weight: 600;
+      }
+      .tip-bar {
+        margin-top: 14px;
+        background: var(--bg);
+        border-radius: 8px;
+        padding: 9px 12px;
+        font-size: 12px;
+        color: var(--text-dim);
+        line-height: 1.4;
+      }
 
-  /* Category */
-  .cat-header { display: flex; align-items: center; justify-content: space-between; padding: 8px 0 4px; }
-  .cat-name { display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; text-transform: capitalize; }
-  .cat-total { font-size: 13px; color: var(--text-dim); }
+      /* Category */
+      .cat-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 8px 0 4px;
+      }
+      .cat-name {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 12px;
+        font-weight: 600;
+        text-transform: capitalize;
+      }
+      .cat-total {
+        font-size: 13px;
+        color: var(--text-dim);
+      }
 
-  /* Expense row */
-  .expense { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 10px 14px; margin-bottom: 5px; display: flex; align-items: center; justify-content: space-between; transition: all 0.2s ease; }
-  .expense.checked { background: rgba(63,185,80,0.04); border-color: var(--green-border); }
-  .expense-left { display: flex; align-items: center; gap: 12px; min-width: 0; }
-  .expense-right { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
-  .checkbox { width: 24px; height: 24px; border-radius: 6px; border: 2px solid var(--border-light); background: transparent; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; flex-shrink: 0; font-size: 13px; font-weight: 700; color: var(--bg); }
-  .checkbox.on { background: var(--green); border-color: var(--green); }
-  .expense-name { font-size: 13px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .expense-name.struck { color: var(--text-dim); text-decoration: line-through; }
-  .expense-sub { font-size: 10px; color: var(--text-faint); margin-top: 1px; }
-  .expense-amount { font-size: 14px; font-weight: 600; }
-  .expense-amount.green { color: var(--green); }
-  .remove-btn { background: none; border: none; color: var(--text-faint); cursor: pointer; font-size: 16px; padding: 0 2px; }
+      /* Expense row */
+      .expense {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 10px 14px;
+        margin-bottom: 5px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        transition: all 0.2s ease;
+      }
+      .expense.checked {
+        background: rgba(63, 185, 80, 0.04);
+        border-color: var(--green-border);
+      }
+      .expense-left {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        min-width: 0;
+      }
+      .expense-right {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-shrink: 0;
+      }
+      .checkbox {
+        width: 24px;
+        height: 24px;
+        border-radius: 6px;
+        border: 2px solid var(--border-light);
+        background: transparent;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s;
+        flex-shrink: 0;
+        font-size: 13px;
+        font-weight: 700;
+        color: var(--bg);
+      }
+      .checkbox.on {
+        background: var(--green);
+        border-color: var(--green);
+      }
+      .expense-name {
+        font-size: 13px;
+        font-weight: 500;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .expense-name.struck {
+        color: var(--text-dim);
+        text-decoration: line-through;
+      }
+      .expense-sub {
+        font-size: 10px;
+        color: var(--text-faint);
+        margin-top: 1px;
+      }
+      .expense-amount {
+        font-size: 14px;
+        font-weight: 600;
+      }
+      .expense-amount.green {
+        color: var(--green);
+      }
+      .remove-btn {
+        background: none;
+        border: none;
+        color: var(--text-faint);
+        cursor: pointer;
+        font-size: 16px;
+        padding: 0 2px;
+      }
 
-  /* Add form */
-  .add-form { background: var(--surface); border: 1px solid var(--green); border-radius: 12px; padding: 16px; margin-top: 8px; animation: slideDown 0.2s ease; }
-  .add-title { font-size: 13px; font-weight: 600; margin-bottom: 10px; }
-  .input-row { display: flex; gap: 8px; margin-bottom: 8px; }
-  .input { background: var(--bg); border: 1px solid var(--border-light); border-radius: 8px; padding: 10px 12px; color: var(--text); font-size: 14px; font-family: 'DM Sans', sans-serif; outline: none; width: 100%; }
-  .input:focus { border-color: var(--green); }
-  .input-amount { font-family: 'DM Mono', monospace; }
-  .cat-pills { display: flex; gap: 6px; margin-bottom: 12px; flex-wrap: wrap; }
-  .cat-pill { border-radius: 6px; padding: 5px 10px; font-size: 11px; cursor: pointer; border: 1px solid var(--border-light); background: var(--bg); color: var(--text-dim); transition: all 0.15s; }
-  .cat-pill.active { color: var(--text); }
-  .btn-row { display: flex; gap: 8px; }
-  .btn-primary { flex: 1; background: var(--green); border: none; border-radius: 8px; padding: 10px; color: var(--bg); font-weight: 600; font-size: 14px; cursor: pointer; font-family: 'DM Sans'; }
-  .btn-secondary { background: var(--border); border: none; border-radius: 8px; padding: 10px 18px; color: var(--text-dim); font-size: 14px; cursor: pointer; font-family: 'DM Sans'; }
+      /* Add form */
+      .add-form {
+        background: var(--surface);
+        border: 1px solid var(--green);
+        border-radius: 12px;
+        padding: 16px;
+        margin-top: 8px;
+        animation: slideDown 0.2s ease;
+      }
+      .add-title {
+        font-size: 13px;
+        font-weight: 600;
+        margin-bottom: 10px;
+      }
+      .input-row {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 8px;
+      }
+      .input {
+        background: var(--bg);
+        border: 1px solid var(--border-light);
+        border-radius: 8px;
+        padding: 10px 12px;
+        color: var(--text);
+        font-size: 14px;
+        font-family: "DM Sans", sans-serif;
+        outline: none;
+        width: 100%;
+      }
+      .input:focus {
+        border-color: var(--green);
+      }
+      .input-amount {
+        font-family: "DM Mono", monospace;
+      }
+      .cat-pills {
+        display: flex;
+        gap: 6px;
+        margin-bottom: 12px;
+        flex-wrap: wrap;
+      }
+      .cat-pill {
+        border-radius: 6px;
+        padding: 5px 10px;
+        font-size: 11px;
+        cursor: pointer;
+        border: 1px solid var(--border-light);
+        background: var(--bg);
+        color: var(--text-dim);
+        transition: all 0.15s;
+      }
+      .cat-pill.active {
+        color: var(--text);
+      }
+      .btn-row {
+        display: flex;
+        gap: 8px;
+      }
+      .btn-primary {
+        flex: 1;
+        background: var(--green);
+        border: none;
+        border-radius: 8px;
+        padding: 10px;
+        color: var(--bg);
+        font-weight: 600;
+        font-size: 14px;
+        cursor: pointer;
+        font-family: "DM Sans";
+      }
+      .btn-secondary {
+        background: var(--border);
+        border: none;
+        border-radius: 8px;
+        padding: 10px 18px;
+        color: var(--text-dim);
+        font-size: 14px;
+        cursor: pointer;
+        font-family: "DM Sans";
+      }
 
-  .action-row { display: flex; gap: 8px; margin-top: 8px; }
-  .btn-add { flex: 1; background: var(--surface); border: 1px dashed var(--border-light); border-radius: 10px; padding: 14px; color: var(--text-dim); font-size: 13px; cursor: pointer; font-family: 'DM Sans'; }
-  .btn-reset { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px; color: var(--text-faint); font-size: 12px; cursor: pointer; font-family: 'DM Sans'; }
+      .action-row {
+        display: flex;
+        gap: 8px;
+        margin-top: 8px;
+      }
+      .btn-add {
+        flex: 1;
+        background: var(--surface);
+        border: 1px dashed var(--border-light);
+        border-radius: 10px;
+        padding: 14px;
+        color: var(--text-dim);
+        font-size: 13px;
+        cursor: pointer;
+        font-family: "DM Sans";
+      }
+      .btn-reset {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 14px 16px;
+        color: var(--text-faint);
+        font-size: 12px;
+        cursor: pointer;
+        font-family: "DM Sans";
+      }
 
-  .how-to { margin-top: 18px; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 16px; }
-  .how-to-title { font-size: 11px; font-weight: 600; color: var(--text-dim); letter-spacing: 0.5px; margin-bottom: 8px; }
-  .how-to-body { font-size: 12px; color: var(--text-dim); line-height: 1.8; }
-  .how-to-body strong { color: var(--text); }
+      .how-to {
+        margin-top: 18px;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 16px;
+      }
+      .how-to-title {
+        font-size: 11px;
+        font-weight: 600;
+        color: var(--text-dim);
+        letter-spacing: 0.5px;
+        margin-bottom: 8px;
+      }
+      .how-to-body {
+        font-size: 12px;
+        color: var(--text-dim);
+        line-height: 1.8;
+      }
+      .how-to-body strong {
+        color: var(--text);
+      }
 
-  @keyframes slideDown { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
+      @keyframes slideDown {
+        from {
+          opacity: 0;
+          transform: translateY(-8px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
 
-  /* Haptic feedback simulation */
-  .expense:active { transform: scale(0.98); }
-  .checkbox:active { transform: scale(0.9); }
-</style>
-</head>
-<body>
+      /* Haptic feedback simulation */
+      .expense:active {
+        transform: scale(0.98);
+      }
+      .checkbox:active {
+        transform: scale(0.9);
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app"></div>
 
-<div id="app"></div>
+    <script>
+      const BUDGET = 1170.05;
+      const STORAGE_KEY = "cc-budget-tracker";
 
-<script>
-const BUDGET = 1170.05;
-const STORAGE_KEY = 'cc-budget-tracker';
+      const DEFAULT_EXPENSES = [
+        {
+          id: 1,
+          name: "One NZ (Mobile/Internet)",
+          amount: 421.62,
+          category: "bills",
+          fixed: true,
+        },
+        {
+          id: 2,
+          name: "Sharesies",
+          amount: 300.0,
+          category: "bills",
+          fixed: true,
+        },
+        {
+          id: 3,
+          name: "Contact (Electric)",
+          amount: 200.93,
+          category: "bills",
+          fixed: true,
+        },
+        {
+          id: 4,
+          name: "Fuel",
+          amount: 130.0,
+          category: "transport",
+          fixed: false,
+        },
+        {
+          id: 5,
+          name: "MongoDB",
+          amount: 40.0,
+          category: "subscriptions",
+          fixed: true,
+        },
+        {
+          id: 6,
+          name: "Heroku",
+          amount: 30.0,
+          category: "subscriptions",
+          fixed: true,
+        },
+        {
+          id: 7,
+          name: "Netflix",
+          amount: 17.5,
+          category: "subscriptions",
+          fixed: true,
+        },
+        {
+          id: 8,
+          name: "MyLotto",
+          amount: 15.0,
+          category: "subscriptions",
+          fixed: true,
+        },
+        {
+          id: 9,
+          name: "Spotify",
+          amount: 7.5,
+          category: "subscriptions",
+          fixed: true,
+        },
+        {
+          id: 10,
+          name: "Amazon Prime",
+          amount: 7.5,
+          category: "subscriptions",
+          fixed: true,
+        },
+      ];
 
-const DEFAULT_EXPENSES = [
-  { id: 1, name: "One NZ (Mobile/Internet)", amount: 421.62, category: "bills", fixed: true },
-  { id: 2, name: "LBR", amount: 300.00, category: "bills", fixed: true },
-  { id: 3, name: "Contact (Electric)", amount: 200.93, category: "bills", fixed: true },
-  { id: 4, name: "Fuel", amount: 130.00, category: "transport", fixed: false },
-  { id: 5, name: "MongoDB", amount: 40.00, category: "subscriptions", fixed: true },
-  { id: 6, name: "Heroku", amount: 30.00, category: "subscriptions", fixed: true },
-  { id: 7, name: "Netflix", amount: 17.50, category: "subscriptions", fixed: true },
-  { id: 8, name: "MyLotto", amount: 15.00, category: "subscriptions", fixed: true },
-  { id: 9, name: "Spotify", amount: 7.50, category: "subscriptions", fixed: true },
-  { id: 10, name: "Amazon Prime", amount: 7.50, category: "subscriptions", fixed: true },
-];
+      const CAT_ICONS = {
+        bills: "⚡",
+        transport: "⛽",
+        subscriptions: "🔄",
+        other: "📌",
+      };
+      const CAT_COLORS = {
+        bills: "var(--cat-bills)",
+        transport: "var(--cat-transport)",
+        subscriptions: "var(--cat-subs)",
+        other: "var(--cat-other)",
+      };
 
-const CAT_ICONS = { bills: "⚡", transport: "⛽", subscriptions: "🔄", other: "📌" };
-const CAT_COLORS = { bills: "var(--cat-bills)", transport: "var(--cat-transport)", subscriptions: "var(--cat-subs)", other: "var(--cat-other)" };
+      function getFortnightDates() {
+        const anchor = new Date(2026, 2, 27); // Mar 27 2026
+        const now = new Date();
+        const diffMs = now - anchor;
+        const diffDays = Math.floor(diffMs / 86400000);
+        const periods = Math.floor(diffDays / 14);
+        const start = new Date(anchor);
+        start.setDate(start.getDate() + periods * 14);
+        if (start > now) start.setDate(start.getDate() - 14);
+        const end = new Date(start);
+        end.setDate(end.getDate() + 13);
+        return { start, end, key: start.toISOString().split("T")[0] };
+      }
 
-function getFortnightDates() {
-  const anchor = new Date(2026, 2, 27); // Mar 27 2026
-  const now = new Date();
-  const diffMs = now - anchor;
-  const diffDays = Math.floor(diffMs / 86400000);
-  const periods = Math.floor(diffDays / 14);
-  const start = new Date(anchor);
-  start.setDate(start.getDate() + periods * 14);
-  if (start > now) start.setDate(start.getDate() - 14);
-  const end = new Date(start);
-  end.setDate(end.getDate() + 13);
-  return { start, end, key: start.toISOString().split('T')[0] };
-}
+      function fmtDate(d) {
+        return d.toLocaleDateString("en-NZ", {
+          day: "numeric",
+          month: "short",
+          year: "numeric",
+        });
+      }
+      function fmtMoney(n) {
+        return "$" + Math.abs(n).toFixed(2);
+      }
 
-function fmtDate(d) { return d.toLocaleDateString('en-NZ', { day: 'numeric', month: 'short', year: 'numeric' }); }
-function fmtMoney(n) { return '$' + Math.abs(n).toFixed(2); }
+      // State
+      let state = {
+        expenses: [],
+        checked: new Set(),
+        alertDismissed: false,
+        showAdd: false,
+        newName: "",
+        newAmount: "",
+        newCat: "other",
+      };
 
-// State
-let state = { expenses: [], checked: new Set(), alertDismissed: false, showAdd: false, newName: '', newAmount: '', newCat: 'other' };
+      function loadState() {
+        const fn = getFortnightDates();
+        try {
+          const raw = localStorage.getItem(STORAGE_KEY + ":" + fn.key);
+          if (raw) {
+            const d = JSON.parse(raw);
+            state.expenses =
+              d.expenses || JSON.parse(JSON.stringify(DEFAULT_EXPENSES));
+            state.checked = new Set(d.checked || []);
+            state.alertDismissed = d.alertDismissed || false;
+          } else {
+            state.expenses = JSON.parse(JSON.stringify(DEFAULT_EXPENSES));
+            state.checked = new Set();
+            state.alertDismissed = false;
+          }
+        } catch (e) {
+          state.expenses = JSON.parse(JSON.stringify(DEFAULT_EXPENSES));
+          state.checked = new Set();
+          state.alertDismissed = false;
+        }
+      }
 
-function loadState() {
-  const fn = getFortnightDates();
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY + ':' + fn.key);
-    if (raw) {
-      const d = JSON.parse(raw);
-      state.expenses = d.expenses || JSON.parse(JSON.stringify(DEFAULT_EXPENSES));
-      state.checked = new Set(d.checked || []);
-      state.alertDismissed = d.alertDismissed || false;
-    } else {
-      state.expenses = JSON.parse(JSON.stringify(DEFAULT_EXPENSES));
-      state.checked = new Set();
-      state.alertDismissed = false;
-    }
-  } catch(e) {
-    state.expenses = JSON.parse(JSON.stringify(DEFAULT_EXPENSES));
-    state.checked = new Set();
-    state.alertDismissed = false;
-  }
-}
+      function saveState() {
+        const fn = getFortnightDates();
+        try {
+          localStorage.setItem(
+            STORAGE_KEY + ":" + fn.key,
+            JSON.stringify({
+              expenses: state.expenses,
+              checked: [...state.checked],
+              alertDismissed: state.alertDismissed,
+            }),
+          );
+        } catch (e) {}
+      }
 
-function saveState() {
-  const fn = getFortnightDates();
-  try {
-    localStorage.setItem(STORAGE_KEY + ':' + fn.key, JSON.stringify({
-      expenses: state.expenses, checked: [...state.checked], alertDismissed: state.alertDismissed
-    }));
-  } catch(e) {}
-}
+      function render() {
+        const fn = getFortnightDates();
+        const total = state.expenses.reduce((s, e) => s + e.amount, 0);
+        const remaining = BUDGET - total;
+        const pct = Math.min((total / BUDGET) * 100, 100);
+        const isOver = total > BUDGET;
+        const isWarn = pct >= 85 && !isOver;
+        const statusColor = isOver
+          ? "var(--red)"
+          : isWarn
+            ? "var(--amber)"
+            : "var(--green)";
+        const paidTotal = state.expenses
+          .filter((e) => state.checked.has(e.id))
+          .reduce((s, e) => s + e.amount, 0);
+        const unpaidTotal = total - paidTotal;
 
-function render() {
-  const fn = getFortnightDates();
-  const total = state.expenses.reduce((s, e) => s + e.amount, 0);
-  const remaining = BUDGET - total;
-  const pct = Math.min((total / BUDGET) * 100, 100);
-  const isOver = total > BUDGET;
-  const isWarn = pct >= 85 && !isOver;
-  const statusColor = isOver ? 'var(--red)' : isWarn ? 'var(--amber)' : 'var(--green)';
-  const paidTotal = state.expenses.filter(e => state.checked.has(e.id)).reduce((s, e) => s + e.amount, 0);
-  const unpaidTotal = total - paidTotal;
+        const cats = [...new Set(state.expenses.map((e) => e.category))];
 
-  const cats = [...new Set(state.expenses.map(e => e.category))];
+        // Days remaining
+        const now = new Date();
+        const daysLeft = Math.max(0, Math.ceil((fn.end - now) / 86400000));
 
-  // Days remaining
-  const now = new Date();
-  const daysLeft = Math.max(0, Math.ceil((fn.end - now) / 86400000));
+        let html = "";
 
-  let html = '';
-
-  // Header
-  html += `<div class="header">
+        // Header
+        html += `<div class="header">
     <div class="header-top">
       <div>
         <div class="header-label">ASB Credit Card</div>
@@ -211,23 +685,23 @@ function render() {
       </div>
       <div>
         <div class="header-dates">${fmtDate(fn.start)} – ${fmtDate(fn.end)}</div>
-        <div class="header-sub">${daysLeft} day${daysLeft!==1?'s':''} left in period</div>
+        <div class="header-sub">${daysLeft} day${daysLeft !== 1 ? "s" : ""} left in period</div>
       </div>
     </div>
   </div>`;
 
-  html += '<div class="content">';
+        html += '<div class="content">';
 
-  // Alert
-  if ((isOver || isWarn) && !state.alertDismissed) {
-    const cls = isOver ? 'over' : 'warn';
-    const icon = isOver ? '🚨' : '⚠️';
-    const title = isOver ? 'BUDGET EXCEEDED' : 'APPROACHING LIMIT';
-    const titleColor = isOver ? 'var(--red)' : 'var(--amber)';
-    const desc = isOver
-      ? `You're ${fmtMoney(Math.abs(remaining))} over your $1,170.05 limit. This eats into your CC payoff.`
-      : `Only ${fmtMoney(remaining)} remaining. Watch any variable expenses.`;
-    html += `<div class="alert ${cls}">
+        // Alert
+        if ((isOver || isWarn) && !state.alertDismissed) {
+          const cls = isOver ? "over" : "warn";
+          const icon = isOver ? "🚨" : "⚠️";
+          const title = isOver ? "BUDGET EXCEEDED" : "APPROACHING LIMIT";
+          const titleColor = isOver ? "var(--red)" : "var(--amber)";
+          const desc = isOver
+            ? `You're ${fmtMoney(Math.abs(remaining))} over your $1,170.05 limit. This eats into your CC payoff.`
+            : `Only ${fmtMoney(remaining)} remaining. Watch any variable expenses.`;
+          html += `<div class="alert ${cls}">
       <div class="alert-body">
         <span class="alert-icon">${icon}</span>
         <div>
@@ -237,12 +711,12 @@ function render() {
       </div>
       <button class="alert-close" onclick="dismissAlert()">✕</button>
     </div>`;
-  }
+        }
 
-  // Ring card
-  const circumference = 2 * Math.PI * 48;
-  const dashLen = (pct / 100) * circumference;
-  html += `<div class="ring-card">
+        // Ring card
+        const circumference = 2 * Math.PI * 48;
+        const dashLen = (pct / 100) * circumference;
+        html += `<div class="ring-card">
     <div class="ring-row">
       <div class="ring-wrap">
         <svg viewBox="0 0 110 110" style="transform:rotate(-90deg)">
@@ -258,8 +732,8 @@ function render() {
       <div class="ring-info">
         <div class="ring-stat">
           <div><div class="stat-label">Total Projected</div><div class="stat-value mono">${fmtMoney(total)}</div></div>
-          <div style="text-align:right"><div class="stat-label">${isOver ? 'Over Budget' : 'Remaining'}</div>
-            <div class="stat-value mono" style="color:${statusColor}">${isOver ? '-' : ''}${fmtMoney(remaining)}</div></div>
+          <div style="text-align:right"><div class="stat-label">${isOver ? "Over Budget" : "Remaining"}</div>
+            <div class="stat-value mono" style="color:${statusColor}">${isOver ? "-" : ""}${fmtMoney(remaining)}</div></div>
         </div>
         <div class="mini-stats">
           <div class="mini-stat" style="background:var(--green-bg)">
@@ -276,66 +750,68 @@ function render() {
     <div class="tip-bar">💡 <strong>Limit:</strong> ${fmtMoney(BUDGET)}/fortnight — every dollar over delays your CC debt payoff</div>
   </div>`;
 
-  // Expenses by category
-  cats.forEach(cat => {
-    const items = state.expenses.filter(e => e.category === cat);
-    const catTotal = items.reduce((s, e) => s + e.amount, 0);
-    const color = CAT_COLORS[cat] || CAT_COLORS.other;
-    const icon = CAT_ICONS[cat] || CAT_ICONS.other;
+        // Expenses by category
+        cats.forEach((cat) => {
+          const items = state.expenses.filter((e) => e.category === cat);
+          const catTotal = items.reduce((s, e) => s + e.amount, 0);
+          const color = CAT_COLORS[cat] || CAT_COLORS.other;
+          const icon = CAT_ICONS[cat] || CAT_ICONS.other;
 
-    html += `<div class="cat-header">
+          html += `<div class="cat-header">
       <div class="cat-name" style="color:${color}">${icon} <span>${cat}</span></div>
       <div class="cat-total mono">${fmtMoney(catTotal)}</div>
     </div>`;
 
-    items.forEach(exp => {
-      const on = state.checked.has(exp.id);
-      html += `<div class="expense ${on ? 'checked' : ''}">
+          items.forEach((exp) => {
+            const on = state.checked.has(exp.id);
+            html += `<div class="expense ${on ? "checked" : ""}">
         <div class="expense-left">
-          <button class="checkbox ${on ? 'on' : ''}" onclick="toggleCheck(${exp.id})">${on ? '✓' : ''}</button>
+          <button class="checkbox ${on ? "on" : ""}" onclick="toggleCheck(${exp.id})">${on ? "✓" : ""}</button>
           <div>
-            <div class="expense-name ${on ? 'struck' : ''}">${exp.name}</div>
-            <div class="expense-sub">${exp.fixed ? 'Fixed charge' : 'Variable — watch this one'}</div>
+            <div class="expense-name ${on ? "struck" : ""}">${exp.name}</div>
+            <div class="expense-sub">${exp.fixed ? "Fixed charge" : "Variable — watch this one"}</div>
           </div>
         </div>
         <div class="expense-right">
-          <span class="expense-amount mono ${on ? 'green' : ''}">${fmtMoney(exp.amount)}</span>
-          ${!exp.fixed ? `<button class="remove-btn" onclick="removeExpense(${exp.id})">✕</button>` : ''}
+          <span class="expense-amount mono ${on ? "green" : ""}">${fmtMoney(exp.amount)}</span>
+          ${!exp.fixed ? `<button class="remove-btn" onclick="removeExpense(${exp.id})">✕</button>` : ""}
         </div>
       </div>`;
-    });
-  });
+          });
+        });
 
-  // Add form or buttons
-  if (state.showAdd) {
-    const cats = ['bills','transport','subscriptions','other'];
-    html += `<div class="add-form">
+        // Add form or buttons
+        if (state.showAdd) {
+          const cats = ["bills", "transport", "subscriptions", "other"];
+          html += `<div class="add-form">
       <div class="add-title">Add Unplanned Expense</div>
       <div class="input-row">
         <input class="input" id="inp-name" placeholder="Description" value="${state.newName}" oninput="state.newName=this.value" style="flex:2">
         <input class="input input-amount" id="inp-amt" placeholder="$0.00" type="number" step="0.01" inputmode="decimal" value="${state.newAmount}" oninput="state.newAmount=this.value" style="flex:1">
       </div>
       <div class="cat-pills">
-        ${cats.map(c => {
-          const active = state.newCat === c;
-          const col = CAT_COLORS[c] || CAT_COLORS.other;
-          return `<button class="cat-pill ${active?'active':''}" style="border-color:${active?col:'var(--border-light)'};color:${active?col:'var(--text-dim)'};background:${active?col+'18':'var(--bg)'}" onclick="state.newCat='${c}';render()">${CAT_ICONS[c]||''} ${c}</button>`;
-        }).join('')}
+        ${cats
+          .map((c) => {
+            const active = state.newCat === c;
+            const col = CAT_COLORS[c] || CAT_COLORS.other;
+            return `<button class="cat-pill ${active ? "active" : ""}" style="border-color:${active ? col : "var(--border-light)"};color:${active ? col : "var(--text-dim)"};background:${active ? col + "18" : "var(--bg)"}" onclick="state.newCat='${c}';render()">${CAT_ICONS[c] || ""} ${c}</button>`;
+          })
+          .join("")}
       </div>
       <div class="btn-row">
         <button class="btn-primary" onclick="addExpense()">Add Expense</button>
         <button class="btn-secondary" onclick="state.showAdd=false;render()">Cancel</button>
       </div>
     </div>`;
-  } else {
-    html += `<div class="action-row">
+        } else {
+          html += `<div class="action-row">
       <button class="btn-add" onclick="state.showAdd=true;render()">+ Add Unplanned Expense</button>
       <button class="btn-reset" onclick="resetPeriod()">↺ Reset</button>
     </div>`;
-  }
+        }
 
-  // How to use
-  html += `<div class="how-to">
+        // How to use
+        html += `<div class="how-to">
     <div class="how-to-title">HOW TO USE</div>
     <div class="how-to-body">
       <strong>1.</strong> Open your ASB app → check which CC charges have come through<br>
@@ -347,55 +823,74 @@ function render() {
     </div>
   </div>`;
 
-  html += '</div>'; // content
-  document.getElementById('app').innerHTML = html;
-}
+        html += "</div>"; // content
+        document.getElementById("app").innerHTML = html;
+      }
 
-function toggleCheck(id) {
-  if (state.checked.has(id)) state.checked.delete(id); else state.checked.add(id);
-  if (navigator.vibrate) navigator.vibrate(10);
-  saveState(); render();
-}
+      function toggleCheck(id) {
+        if (state.checked.has(id)) state.checked.delete(id);
+        else state.checked.add(id);
+        if (navigator.vibrate) navigator.vibrate(10);
+        saveState();
+        render();
+      }
 
-function removeExpense(id) {
-  state.expenses = state.expenses.filter(e => e.id !== id);
-  state.checked.delete(id);
-  saveState(); render();
-}
+      function removeExpense(id) {
+        state.expenses = state.expenses.filter((e) => e.id !== id);
+        state.checked.delete(id);
+        saveState();
+        render();
+      }
 
-function addExpense() {
-  const name = state.newName.trim();
-  const amt = parseFloat(state.newAmount);
-  if (!name || isNaN(amt) || amt <= 0) return;
-  state.expenses.push({ id: Date.now(), name, amount: amt, category: state.newCat, fixed: false });
-  state.newName = ''; state.newAmount = ''; state.newCat = 'other'; state.showAdd = false;
-  saveState(); render();
-}
+      function addExpense() {
+        const name = state.newName.trim();
+        const amt = parseFloat(state.newAmount);
+        if (!name || isNaN(amt) || amt <= 0) return;
+        state.expenses.push({
+          id: Date.now(),
+          name,
+          amount: amt,
+          category: state.newCat,
+          fixed: false,
+        });
+        state.newName = "";
+        state.newAmount = "";
+        state.newCat = "other";
+        state.showAdd = false;
+        saveState();
+        render();
+      }
 
-function dismissAlert() {
-  state.alertDismissed = true;
-  saveState(); render();
-}
+      function dismissAlert() {
+        state.alertDismissed = true;
+        saveState();
+        render();
+      }
 
-function resetPeriod() {
-  if (!confirm('Reset all expenses to defaults for this fortnight?')) return;
-  state.expenses = JSON.parse(JSON.stringify(DEFAULT_EXPENSES));
-  state.checked = new Set();
-  state.alertDismissed = false;
-  state.showAdd = false;
-  saveState(); render();
-}
+      function resetPeriod() {
+        if (!confirm("Reset all expenses to defaults for this fortnight?"))
+          return;
+        state.expenses = JSON.parse(JSON.stringify(DEFAULT_EXPENSES));
+        state.checked = new Set();
+        state.alertDismissed = false;
+        state.showAdd = false;
+        saveState();
+        render();
+      }
 
-// Init
-loadState();
-render();
+      // Init
+      loadState();
+      render();
 
-// Re-render at midnight to catch period changes
-setInterval(() => { loadState(); render(); }, 60000);
+      // Re-render at midnight to catch period changes
+      setInterval(() => {
+        loadState();
+        render();
+      }, 60000);
 
-// Register service worker for offline support
-if ('serviceWorker' in navigator) {
-  const swCode = `
+      // Register service worker for offline support
+      if ("serviceWorker" in navigator) {
+        const swCode = `
     const CACHE = 'cc-tracker-v1';
     self.addEventListener('install', e => { self.skipWaiting(); });
     self.addEventListener('activate', e => { e.waitUntil(clients.claim()); });
@@ -403,9 +898,11 @@ if ('serviceWorker' in navigator) {
       e.respondWith(fetch(e.request).catch(() => caches.match(e.request)));
     });
   `;
-  const blob = new Blob([swCode], { type: 'application/javascript' });
-  navigator.serviceWorker.register(URL.createObjectURL(blob)).catch(() => {});
-}
-</script>
-</body>
+        const blob = new Blob([swCode], { type: "application/javascript" });
+        navigator.serviceWorker
+          .register(URL.createObjectURL(blob))
+          .catch(() => {});
+      }
+    </script>
+  </body>
 </html>
