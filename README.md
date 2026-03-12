@@ -19,18 +19,18 @@ This app helps you monitor credit card spending within each fortnightly pay cycl
 
 ## Pre-loaded Expenses
 
-| Expense                  | Amount   | Category      | Type     |
-|--------------------------|----------|---------------|----------|
-| One NZ (Mobile/Internet) | $421.62  | Bills         | Fixed    |
-| LBR                      | $300.00  | Bills         | Fixed    |
-| Contact (Electric)       | $200.93  | Bills         | Fixed    |
-| Fuel                     | $130.00  | Transport     | Variable |
-| MongoDB                  | $40.00   | Subscriptions | Fixed    |
-| Heroku                   | $30.00   | Subscriptions | Fixed    |
-| Netflix                  | $17.50   | Subscriptions | Fixed    |
-| MyLotto                  | $15.00   | Subscriptions | Fixed    |
-| Spotify                  | $7.50    | Subscriptions | Fixed    |
-| Amazon Prime             | $7.50    | Subscriptions | Fixed    |
+| Expense                  | Amount  | Category      | Type     |
+| ------------------------ | ------- | ------------- | -------- |
+| One NZ (Mobile/Internet) | $421.62 | Bills         | Fixed    |
+| Sharesies                | $300.00 | Bills         | Fixed    |
+| Contact (Electric)       | $200.93 | Bills         | Fixed    |
+| Fuel                     | $130.00 | Transport     | Variable |
+| MongoDB                  | $40.00  | Subscriptions | Fixed    |
+| Heroku                   | $30.00  | Subscriptions | Fixed    |
+| Netflix                  | $17.50  | Subscriptions | Fixed    |
+| MyLotto                  | $15.00  | Subscriptions | Fixed    |
+| Spotify                  | $7.50   | Subscriptions | Fixed    |
+| Amazon Prime             | $7.50   | Subscriptions | Fixed    |
 
 **Total pre-loaded: $1,170.05**
 
